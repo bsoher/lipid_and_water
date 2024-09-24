@@ -1,0 +1,14 @@
+title: Lipid and Water Removal Overview
+lang: en
+description: Content and links from ISMRM MRS Workshop 2024, Boston, presentation.
+
+remote_theme: clearpathrobotics/jekyll-rtd-theme
+
+readme_index:
+  with_frontmatter: true
+
+exclude:
+  - Makefile
+  - Gemfile
+  - Gemfile.lock
+
