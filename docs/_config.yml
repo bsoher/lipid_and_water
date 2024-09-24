@@ -4,7 +4,7 @@ description: Content and links from ISMRM MRS Workshop 2024, Boston, presentatio
 
 remote_theme: just-the-docs/just-the-docs
 
-color_scheme: dark
+color_scheme: light
 
 readme_index:
   with_frontmatter: true
