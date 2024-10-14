@@ -1,0 +1,41 @@
+Version 2.0.2 - 24 July, 2023
+------------------------------------------------------------------------------
+This is a bugfix release for deprecated function calls in numpy. Also updated 
+URL in setup.py to describe the GitHub repository that now houses the code. 
+No change to algorithm functionality.
+
+
+
+Version 2.0.1 - 26 June, 2020
+------------------------------------------------------------------------------
+The default value for the SVD algorithm in hlsvdpro() has been set to use the
+scipy.linalgsvd() method by setting the default for the sparse keyword to False. 
+The user can still choose to set it to True if they want. Reason - After using 
+this code on a number of data sets in the Vespa-Analysis platform, we saw
+instability when data size or nsv_sought were set to 'edge' values. That is 
+either very small or very large. This was for data with 4096 point. So we were 
+able to push the values far enough to test rigorously.  The fix for this seems 
+to be to use the 'full' scipy.linalg.svd() method and truncate the results to 
+the nsv_sought. 
+
+
+
+Version 2.0.0 - 16 June, 2020
+------------------------------------------------------------------------------
+This is HLSVDPROPY release version 2.0.0, it is a 'pure Python' implementation
+of the algorithm provided by the Fortran HLSVDPRO version 2.0.0 package.
+
+Note. We are starting with version 2.x to be in line with the version of
+HLSVDPRO to which it corresponds. 
+
+HLSVDPRO 2.x was adaptated to use PROPACK library version 2.1 to implement the 
+HLSVDPRO algorithm as described in:
+
+  Laudadio T, et.al. "Improved Lanczos algorithms for blackbox MRS data 
+  quantitation", Journal of Magnetic Resonance, Volume 157, pages 292-297, 2002.
+  
+we are using the scipy.linalg.sparse.svds() algorithm to replace PROPACK. 
+Otherwise, the algorithm remains the same.
+
+HLSVDPROPY version 2.0.0 is compatible with Python 2.7 and 3.x. 
+

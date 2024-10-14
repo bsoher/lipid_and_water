@@ -1,0 +1,365 @@
+tdfdfit_begin_of_file
+
+# TDFDFIT  FIT CONTROL & STARTING VALUE FILE
+# ==========================================
+
+# Revision Information
+# --------------------
+# TDFDFIT Version 2.4 
+#      28 - 01 - 1999
+	
+# Spectrum & Data Acquistion Information
+# --------------------------------------
+# This section tells TDFDFIT some characteristics
+# of the spectrum, in detail:
+#  * number of points acquired  (2,4,8,16,...1024)
+#  * starting point of noise interval; )
+#  * ending point of noise interval : noise interval is a spectral region 
+#    with low signal content (flat part). The program needs this interval 
+#    to calculate the standard deviation of the noise in order to be able 
+#    to calculate the Cramer Rao minimium variance bound, which is an  
+#    estimate of the error in the parameter values 
+#  * number of lines (Lorentzians, Gaussians, Voigts or Non Analytic)
+#  * number of line shape function coefficients of the arbitrary line shape
+#  * first order phase correction needed for proper phasing (degrees)
+#  * connecting parameter points in spectrum to Hz Units  (Hz/per point)
+#    per definition first spectral point = 0 Hz
+#  * tolerace (ftol) which defines breakoff criterium of frprmn; has no 
+#    influence when using random minization. Recommended value is 1.0E-07
+#  * integer value indicating how many points should be set to zero 
+#    at the beginning of the fid: this is a usefull option if the first
+#    'ignore' number of points cannot be modelled properly. This may be 
+#    due eddy currents, RF filters etc. The program will set these number
+#    of points in timedomain to zero in as well the model as the signal to fit
+#  * integer indicating how much patterns are used in the fit  
+
+tdfdfit_spectrum_information
+
+1024
+824
+1023
+	0
+	0
+0.0000000000E+000
+1.0000000000E+000
+1.0000000117E-007
+	0
+	9
+
+# Following part defines the paths and filenames where
+# the program can find the n_patterns. Patterns are 
+# either provided in binary signal form (ending with .bin)
+# the signal is defined in frequency domain!!! or can be
+# provided in parameteric form, having a  .pat extension
+# for more information type 'tdfidfit -h 8' at your prompt
+# to get more information on patterns 
+
+tdfdfit_pattern_references
+
+Models\semiLaser135BW1200_3T\Numeric_Patterns\Choline(Cho).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\Glutamate(Glu).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\Lactate(Lac).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\Glutamine_noNH2(Gln).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\creatine_3T_TE135_BW1200_47ppm.bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\Aspartate(Asp).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\NAcetylAspartate(NAA).bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\myo_inositol_3T_TE135_BW1200_47ppm.bin
+Models\semiLaser135BW1200_3T\Numeric_Patterns\NAcetylAspartate(NAA)-2_6ppmmultiplet.bin
+
+
+# Fit Control Parameters
+# --------------------------------------
+# This section tells TDFDFIT in what way the spectrum should be fitted.
+# In detail : 
+#  * in which fit mode tdfdfit should operate
+#    fitmode = 1 : no reference lineshape fit : straight forward parameter fit 
+#    fitmode = 2 : a reference lineshape is expected having the name 
+#                  <filenametofit.ref> 
+#    fitmode = 3 : line shape fourier coefficients are determined in this mode 
+#  * verbose parameter (varying from 0..3) indicating how much
+#    information is provided to the user during the fit
+#    fitmode = 2 provides a nice amount of information and is recommended for
+#    standard all day fitting 
+#  * about which line line parameter and derivation information
+#    is provided to the user: runtime the user can follow the fate of
+#    the parameter values as well as their derivatives one chosen single line 
+#  * whether tdfdfit should calculate the Cramer Rao minimum variance
+#    bound at the end of the fit. For large number of parameters the error 
+#    calculation is a time consuming operation.
+#    It is recommended to calculate the errors (uncertainties) in the
+#    parameters in order to get an impression on how reliable the
+#    obtained line parameters are and the stability of the model.
+#  * parameter indicating what data format is wanted. In the current version
+#    there are three options : [none],[sage],[sage_idl]
+#    case [none]    : the program reads only the binary file containing
+#                     the number of spectral points (data format: binary doubles
+#                     real1, imaginary1, real2, imaginary2 ... imaginaryN)
+#                     4 bytes per floating point number (single precision).
+#    case [sage]    : the program reads a binary file containing
+#                     the number of spectral points (data format: binary doubles
+#                     real1, imaginary1, real2, imaginary2 ... imaginaryN)
+#                     4 bytes per floating point number (single precision).
+#                     In the mode the program also attemps to copy 
+#                     .ddd+[filename]+[extension] files which are used in 'sage'
+#                     which is a graphic oriented dataprocessing environment 
+#    case [sage_idl]: in this case the program reads  t w o  sage_idl files : 
+#                     [filename].sdf (binary data file) and [filename].shf 
+#    (ascii header file) and creates sage_idl processable output files  
+#                     having also sage_idl file format. 
+#  * par_ranges is a parameter which indicates whether parameter ranges have to 
+#    be used  during minimization NOTE: ranges have ONLY meaning in the case 
+#    random minimization method (see below). It has no meaning if conjugate 
+#    gradients method is used for minimization.
+#    if par_ranges = 3 the program reads range information : no range tests are 
+#    performed on DEPENDENT parameters, i.e. parameters which have either a fixed
+#    value or for which prior knowledge is defined (see below) 
+#    if par_ranges = 2 then the program reads no range information
+#    if par_ranges = 1 then the program reads range information and uses this 
+#    if the random minimization algorithm is chosen in one or more steps
+#    if par_ranges = 0 : the program reads parameter ranges but does not use them
+#    the result parameter file (verbose.par) contains default ranges: nice 
+#    option to set up a random fit. 
+#  * a number of of lines which start with @ : lines which define the fitstrategy
+#    to be followed for the fit-job. Each line defines one complete minimization
+#    pass of the program in a way which depends on the settings of the parameters
+#    of that specific line. 
+#    The meaning of the parameters on these lines is the following : 
+#     > The first parameter indicates the chosen algorithm : 
+#                 >> 1 = random minimization
+#                 >> 2 = conjugate gradients 
+#    If the random minimization is chosen par_ranges MUST be set to one 
+#     > The second parameter indicates after which time domain point  
+#    the response is being truncated: option is usefull to speed up the
+#    fit in the first few fit strategy steps. The value should be chosen
+#    smaller or equal than the number of points in the spectrum to fit.
+#    It is advisable to end the fit with a fit strategy step performed 
+#    at maximum spectral resolution, so no truncation. 
+#     > The following five parameters are logic variables [0 = no ,1 = yes] 
+#    They define which parameter-group has to be fitted during the pass.
+#    Note that only the free parameters are fitted during each pass : 
+#    absolutely fixed parameter do not change their value and parameter for which
+#    prior knowledge is defined (see below) 
+#    There are 5 parameter groups: 
+#                 >> a line area parameter group 
+#                 >> a chemical shift group 
+#                 >> a linewidth1 group (gaussian with of Voigt line)
+#                 >> a zero order phase group (may be different for each line) 
+#                 >> a linewidth2 parameter group (lorntzian with of Voigt line 
+#    There are two linewidth parameter groups because the Voigt lineshape is 
+#    regarded as the basic MR-linetype. 
+#     > The 7-th parameter represents the type of weighting to be used (1 or 7). 
+#                 >> 1 = no weighting 
+#                 >> 7 = see MRM paper for exact definition 
+#     > The 8-th logic parameter defines whether the fit has to be preceeded by a
+#    convolution in order to correct a global offset frequency differece before
+#    before performing the fitting pass. Note that switching this option on (1) 
+#    makes only sense in the first fitting pass 
+#     > The 9-th parameter indicates the maximum number of iteration steps to be 
+#    used during in the fitting pass. This option can be used to force 
+#    minimization termination before the stop criteria are satisfied. This value 
+#    is set to 20 in the case od random minimization
+#     > 10-th parameter indicate the chi-square minimization type: 
+#                 >>  0 : an absorption mode fit is performed 
+#                 >>  1 : an dispersion mode fit is performed 
+#                 >>  2 : a complex mode fit is performed 
+#                 >>  3 : a magnitude spectrum fit is performed 
+#                 >>  4 : a power spectrum fit is performed 
+#     NOTE: if a magnitude spectrum fit has to be performed the program expects 
+#       the spectra to fit to have a COMPLEX file format (see above) 
+#     > The 11-th parameter indicates how many frequency intervals have to be 
+#    fitted. The minimum number of intervals is 1. The line is then 
+#    completed by 2*number of frequency intervals representing the starting 
+#    and stopping points of the selected frequency bands: NOTE : these values are
+#    point numbers NOTE frequencies. In a future version this will be replaced by 
+#    frequency units (Hz) which are used.
+
+tdfdfit_fit_control
+
+1
+0
+1
+0
+none
+0
+
+@    2  1024    1    0    0    0    0    0    0     1   100     2     1   470   950  
+@    2  1024    0    1    0    1    0    0    0     0   100     2     1   470   950  
+@    2  1024    1    0    0    0    0    0    0     0   100     2     1   470   950  
+@    2  1024    1    0    1    0    1    0    0     0   100     2     1   470   950  
+@    2  1024    1    1    1    1    1    0    0     0   100     2     1   470   950  
+
+# Because the fitting of the spectrum is carried out iteratively in TDFDFIT using
+# a vector based conjugate gradients descent algorithm for the minimization of
+# the sum of least squares the user has to provide starting values for the
+# algorithm. The user has to provide for each line a starting area, offset
+# frequency (in Hz, with 0Hz at the first point of the spectrum), linewidth 
+# parameter width2 which is the Lorentzian width at half height in Hz
+# (lwhh) a Gaussian lineshape  width at half height (width1) (gwhh) 
+# A Voigt line has both gwhh and lwhh unequal to zero 
+
+# number      area          frequency       width1          phase          width2 
+#  [--]       [--]            [Hz]           [Hz]         [degrees]         [Hz]  
+
+tdfdfit_starting_values 
+
+1   8.82553577E00 2.82657410E02 0.00000000E00 -2.60639400E01  4.11240721E00
+2   4.38384563E-01  2.86944000E02 0.00000000E00 -1.30527601E01  4.57188511E00
+3   8.33089530E-01  2.77078613E02 0.00000000E00 -1.30527601E01  4.57188511E00
+4   1.11889255E00 2.86944092E02 0.00000000E00 -1.30527601E01  4.57188511E00
+5   1.29739351E01 -3.71621895E00  0.00000000E00 -1.40527601E01  4.57188416E00
+6   5.79132617E-01  2.72336212E02 0.00000000E00 -1.30527601E01  4.57188511E00
+7   1.09058399E01 2.68722107E02 0.00000000E00 -1.30527601E01  4.57188511E00
+8   1.67255664E00 -4.36935806E00  0.00000000E00 -1.30527601E01  4.57188511E00
+9   5.32887220E-01  2.67948212E02 0.00000000E00 -1.30527601E01  4.57188511E00
+
+# prior knowledge definition
+# ---------------------------------------------------------------------------
+# In the following part of this file prior knowledge is defined. Of each line
+# parameter the user should define whether this parameter has to be fitted or
+# not. Of each line is defined : 
+#         * [line number]
+#         * [line type] [1=Lorentz, 2=Gaussian, 3=Voigt]
+#         * [line shape fit] [1=yes , 0=no]
+#         * [area parameter] of [line number] fixed to [other line number]
+#           If [other line number] = [line number] itself the parameter is not
+#           changed at all during the whole fit. If {area parameter} is equal
+#           to zero than the parameter is called free and is fitted if the
+#           the parameter group 'area' is fitted in the fit-pass. If the
+#           [area parameter]!=[line number] then the parameter changes its
+#           value relative to  [line number]
+#         * value of the area parameter
+#         * [offset parameter] of [line number] fixed to [other line number]
+#           If [other line number] = [line number] itself the parameter is not
+#           changed at all during the whole fit. If [offset parameter] is equal
+#           to zero than the parameter is called free and is fitted if the
+#           the parameter group 'offset' is fitted in the fit-pass. If the
+#           [offset parameter]!=[line number] then the parameter changes its
+#           value relative to  [line number]  
+#         * value of the offset parameter
+#         * [width1 parameter] of [line number] fixed to [other line number]
+#           If [other line number] = [line number] itself the parameter is not
+#           changed at all during the whole fit. If [width1 parameter] is equal
+#           to zero than the parameter is called free and is fitted if the
+#           the parameter group 'width1' is fitted in the fit-pass. If the
+#           [width1 parameter]!=[line number] then the parameter changes its
+#           value relative to  [line number]
+#         * value of the 'width1' parameter
+#         * [phase parameter] of [line number] fixed to [other line number]
+#           If [other line number] = [line number] itself the parameter is not
+#           changed at all during the whole fit. If [phase parameter] is equal
+#           to zero than the parameter is called free and is fitted if the
+#           the parameter group 'phase' is fitted in the fit-pass. If the
+#           [phase parameter]!=[line number] then the parameter changes its
+#           value relative to [line number]
+#         * value of the 'phase' parameter
+#         * [width2 parameter] of [line number] fixed to [other line number]
+#           If [other line number] = [line number] itself the parameter is not
+#           changed at all during the whole fit. If [witdh2 parameter] is equal
+#           to zero than the parameter is called free and is fitted if the
+#           the parameter group 'width2' is fitted in the fit-pass. If the
+#           [witdh2 parameter]!=[line number] then the parameter changes its
+#           value relative to  [line number]
+#         * value of the 'width2' parameter
+#           For each parameter a minimum and a maximum value is added, 
+#           together defining the allowed parameter range in which
+#           the random minimization algorithm searches the optimal solution
+#           If par_ranges is not equal to 1 the program generates default ranges
+#           * area parameters   : min=value-0.5*value  max=value + 0.5*value
+#           * chemical shifts   : min=value-0.01*value max=value + 0.01*value
+#           * Gaussian widths   : min=value-0.1*value  max=value + 0.1*value
+#           * zero order phase  : min=value-20.0       max=value + 20.0
+#           * Lorentzian widths : min=value-0.1*value  max=value + 0.1*value
+#           If the conjugate gradients algorithm is used these ranges
+#           have no effect on the way the minimzarion is performed.
+
+tdfdfit_prior_knowledge
+
+1
+0
+4
+0	8.82553577E+00	0.00000000E00	2.00000000E00
+7	2.82657410E+02	-6.00003052E00	6.00000000E00
+7	0.00000000E+00	-1.00000000E00	1.00000000E00
+7	-2.60639400E+01	-4.50000000E01	4.50000000E01
+7	4.11240721E+00	0.00000000E00	1.00000000E01
+2
+0
+4
+0	4.38384563E-01	0.00000000E00	2.00000000E00
+7	2.86944000E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01
+3
+0
+4
+0	8.33089530E-01	0.00000000E00	2.00000000E00
+7	2.77078613E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01
+4
+0
+4
+0	1.11889255E00	0.00000000E00	2.00000000E00
+7	2.86944092E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01
+5
+0
+4
+0	1.29739351E01	0.00000000E00	2.00000000E00
+7	-3.71621895E00	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.40527601E01	-4.50000000E01	4.50000000E01
+7	4.57188416E00	0.00000000E00	1.00000000E01
+6
+0
+4
+0	5.79132617E-01	0.00000000E00	2.00000000E00
+7	2.72336212E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01
+7
+0
+4
+0	1.09058399E01	0.00000000E00	2.00000000E00
+0	2.68722107E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+0	-1.30527601E01	-4.50000000E01	4.50000000E01
+0	4.57188511E00	0.00000000E00	1.00000000E01
+8
+0
+4
+0	1.67255664E00	0.00000000E00	2.00000000E00
+7	-4.36935806E00	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01	
+9
+0
+4
+0	5.32887220E-01	0.00000000E00	2.00000000E00
+7	2.67948212E02	-6.00003052E00	6.00000000E00
+7	0.00000000E00	-1.00000000E00	1.00000000E00
+7	-1.30527601E01	-4.50000000E01	4.50000000E01
+7	4.57188511E00	0.00000000E00	1.00000000E01
+# Lineshape function 
+#-----------------------------------------------------------------
+# The part of the fit control / starting value file determines the
+# starting values of the arbitrary lineshape function. Please note 
+# that the lowest lsf_coefs positive and negative frequencies    
+
+# symmetric around zero are defined 
+
+tdfdfit_line_shape_function
+
+
+
+tdfdfit_end_of_file
+
+
+----------------------------------------------------------
+File created at :  12:03:59 W. Europe Summer Time Tuesday October 25 2022 
